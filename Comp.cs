@@ -49,4 +49,75 @@ public class Comp   // комп. управление в игре
         return isEmpty;
 
     }
+    public int[,] ConfigureShips()
+    {
+        int lengthShip = 4;
+        int cycleValue = 4;
+        int shipsCount = 10;
+        Random r = new Random();
+
+        int posX = 0;
+        int posY = 0;
+
+        while (shipsCount > 0)
+        {
+            for (int i = 0; i < cycleValue / 4; i++)
+            {
+                posX = r.Next(1, Form1.mapSize);
+                posY = r.Next(1, Form1.mapSize);
+
+                while (!IsInsideMap(posX, posY + lengthShip - 1) || !IsEmpty(posX, posY, lengthShip))
+                {
+                    posX = r.Next(1, Form1.mapSize);
+                    posY = r.Next(1, Form1.mapSize);
+                }
+                for (int k = posY; k < posY + lengthShip; k++)
+                {
+                    myMap[posX, k] = 1;
+                }
+                shipsCount--;
+                if (shipsCount <= 0)
+                    break;
+            }
+            cycleValue += 4;
+            lengthShip--;
+        }
+
+        return myMap;
+
+    }
+
+
+    public bool Shoot()
+    {
+        bool hit = false;
+        Random r = new Random();
+
+        int posX = r.Next(1, Form1.mapSize);
+        int posY = r.Next(1, Form1.mapSize);
+
+        while (enemyButtons[posX, posY].BackColor == Color.Blue || enemyButtons[posX, posY].BackColor == Color.Black)
+        {
+            posX = r.Next(1, Form1.mapSize);
+            posY = r.Next(1, Form1.mapSize);
+        }
+
+        if (enemyMap[posX, posY] != 0)
+        {
+            hit = true;
+            enemyMap[posX, posY] = 0;
+            enemyButtons[posX, posY].BackColor = Color.Blue;
+            enemyButtons[posX, posY].Text = "X";
+            MessageBox.Show("Увы по Вам попали подбит Ваш корабль!");
+        }
+        else
+        {
+            hit = false;
+            enemyButtons[posX, posY].BackColor = Color.Black;
+        }
+        if (hit)
+            Shoot();
+        return hit;
+    }
 }
+
